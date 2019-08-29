@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Procesando pago</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+</head>
+<body>
+        <style>
+                .demo-card-wide.mdl-card {
+                    top:50%;
+                    width: 512px;
+                }
+                .demo-card-wide > .mdl-card__title {
+                    color: #fff;
+                    height: 176px;
+                    background: url("{{  url_for('static', filename='not_found.jpg') }}") center / cover;
+                }
+                .demo-card-wide > .mdl-card__menu {
+                    color: #fff;
+                }
+                .center {
+                    display: block;
+                    margin-left: 50%;
+                    margin-right: auto;
+                    position: absolute;
+                    top: 50%;
+                }
+        </style>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                {% if message['code'] == 0 %}   
+                    <div class="mdl-grid">
+                        <div class="mdl-layout-spacer"></div>
+                        <div class="mdl-cell mdl-cell--4-col">
+                            <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+                                <div class="mdl-card__title">
+                                    <h2 class="mdl-card__title-text">Huston... tenemos problemas</h2>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    {{message['message']}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mdl-layout-spacer"></div>
+                    </div> 
+                    
+                {% endif %}            
+            {% endfor %}
+        {% else %}
+            <div class="mdl-spinner center mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        {% endif %}
+    {% endwith %}
+    
+    <form method="post" action="{{url}}">
+            <input name="merchantId"    type="hidden"  value="{{merchantId}}"   >
+            <input name="accountId"     type="hidden"  value="{{accountId}}" >
+            <input name="description"   type="hidden"  value="{{product.Titulo}}"  >
+            <input name="referenceCode" type="hidden"  value="{{referencecode}}" >
+            <input name="amount"        type="hidden"  value="{{amount+aumento}}"   >
+            <input name="tax"           type="hidden"  value="{{aumento}}"  >
+            <input name="taxReturnBase" type="hidden"  value="{{amount}}" >
+            <input name="currency"      type="hidden"  value="COP" >
+            <input name="signature"     type="hidden"  value="{{firma}}"  >
+            <input name="test"          type="hidden"  value="1" >
+            <input name="payerFullName" type="hidden"  value="{{user.name}} {{user.lastname}}" >
+            <input name="buyerEmail"    type="hidden"  value="{{user.email}}" >
+            <input name="telephone"    type="hidden"  value="{{address.number_contact}}" >
+            <input name="billingAddress" type="hidden"  value="VIA {{address.via}} N {{address.number_via}} - {{address.additional_data}}" >
+            <input name="responseUrl"    type="hidden"  value="https://pagos.kiero.co/" >
+            <input name="confirmationUrl"    type="hidden"  value="https://pagos.kiero.co/confirmation" >
+            <input name="shippingAddress" type="hidden" value="{{address.via}} {{address.number_via}} - {{address.additional_data}}" >
+            <input name="shippingCity" type="hidden" value="{{address.city}} " >
+            <input name="shippingCountry" type="hidden" value="CO" >
+
+
+            <input name="Submit" hidden  id="clickButton" type="submit"  value="Enviar" >
+    </form>
+
+<script>
+    window.onload = function(){
+    var button = document.getElementById('clickButton'),
+        form = button.form;
+
+    form.addEventListener('submit', function(){
+        return false;
+    })
+
+    var times = 100;   //Here put the number of times you want to auto submit
+    (function submit(){
+        if(times == 0) return;
+        form.submit();
+        times--;
+        // setTimeout(submit, 1000);   //Each second
+    })(); 
+    }
+</script>
+
+</body>
+</html>
