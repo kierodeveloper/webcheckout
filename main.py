@@ -67,9 +67,9 @@ def pagos(idUser,idProduct,quantity):
             flash({"code":0,"message":"El producto no existe o esta inhabilitado"})
             return render_template('index.html', url = env_pruebas)
         referencecode = (generar_referencia_payu(idProduct,idUser))
-        amount = int(product.Precio_cop)
+        amount = int(product.Precio_cop) * quantity
         aumento = amount * (PORCENTAJE_IVA / 100)  # Dividir entre 100 porque es un porcentaje
-        total = (amount+aumento)
+        total = (amount-aumento)
         firma = generar_firma(apikey,merchantId,referencecode,total,'COP')
         
         return render_template('index.html', url = env_produccion,user=user,product=product,merchantId=merchantId,accountId=accountId,referencecode=referencecode,firma=firma, aumento=aumento,amount=amount,address=address)
