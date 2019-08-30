@@ -46,7 +46,7 @@ def generar_firma(apiKey,merchantId,referenceCode,amount,currency):
 def pagos(idUser,idProduct,quantity):
     if request.method == 'GET':
         with conn:
-            query = """select * from users where id = {idUser} or idGoogle = {idUser}""".format(idUser=idUser)
+            query = """select * from users where id = {idUser} or idGoogle = '{idUser}'""".format(idUser=idUser)
             crsr = conn.execute(query)
             user = crsr.fetchone()
         if not user:
@@ -59,7 +59,7 @@ def pagos(idUser,idProduct,quantity):
             product = crsr.fetchone()
 
         with conn:
-            query = """SELECT * FROM addresses_users_kiero where id_user = {}""".format(idUser)
+            query = """SELECT * FROM addresses_users_kiero where id_user = '{}'""".format(idUser)
             crsr = conn.execute(query)
             address = crsr.fetchone()
 
