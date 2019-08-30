@@ -5,7 +5,7 @@ import functools
 from datetime import datetime
 import random
 import hashlib
-
+import math
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -67,10 +67,11 @@ def pagos(idUser,idProduct,quantity):
             flash({"code":0,"message":"El producto no existe o esta inhabilitado"})
             return render_template('index.html', url = env_pruebas)
         referencecode = (generar_referencia_payu(idProduct,idUser))
-        amount = int(product.Precio_cop)
-        aumento = amount * (PORCENTAJE_IVA / 100)  # Dividir entre 100 porque es un porcentaje
-        
-        total = (amount+aumento)
+
+        aumento = math.ceil((int(product.Precio_cop) * quantity) * (PORCENTAJE_IVA / 100)) # Dividir entre 100 porque es un porcentaje
+        amount = (int(product.Precio_cop) * quantity) - aumento
+        total = int(product.Precio_cop) * quantity
+
         firma = generar_firma(apikey,merchantId,referencecode,total,'COP')
         
         return render_template('index.html', url = env_produccion,user=user,product=product,merchantId=merchantId,accountId=accountId,referencecode=referencecode,firma=firma, aumento=aumento,amount=amount,address=address)
